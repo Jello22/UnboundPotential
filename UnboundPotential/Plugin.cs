@@ -13,12 +13,13 @@ namespace UnboundPotential
     {
         public const string Guid = "com.Jello.UnboundPotential";
         public const string Name = "Unbound Potential";
-        public const string Version = "0.3.0";
+        public const string Version = "0.4.0";
         private const string PrefabName = "UnboundPotential_Forge";
         private const string OriginalPrefab = "UpgradeStation";
 
         private static Plugin? _instance;
         private Harmony? _harmony;
+        private IdolRecipes? _idolRecipes;
         // The server is authoritative for gameplay configuration.
         private readonly ConfigSync _configSync = new ConfigSync(Guid)
         {
@@ -62,6 +63,7 @@ namespace UnboundPotential
             _configSync.AddConfigEntry(_enabled).SynchronizedConfig = true;
             _configSync.AddConfigEntry(_requiredStation).SynchronizedConfig = true;
             _configSync.AddConfigEntry(_requirements).SynchronizedConfig = true;
+            _idolRecipes = new IdolRecipes(this, _configSync);
             _harmony = new Harmony(Guid);
             _harmony.PatchAll(typeof(Plugin).Assembly);
             Logger.LogInfo(Name + " " + Version + " loaded");
@@ -107,6 +109,7 @@ namespace UnboundPotential
         private void OnDestroy()
         {
             _harmony?.UnpatchSelf();
+            _idolRecipes?.Cleanup();
             Cleanup();
             if (_instance == this) _instance = null;
         }
@@ -279,7 +282,7 @@ namespace UnboundPotential
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
         private static class SceneAwakePatch
         {
-            private static void Postfix() { _instance?.TryRegister(); }
+            private static void Postfix() { _instance?.TryRegister(); _instance?._idolRecipes?.Refresh(); }
         }
 
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.OnDestroy))]
@@ -294,7 +297,7 @@ namespace UnboundPotential
         [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.UpdateRegisters))]
         private static class DatabaseRegistersPatch
         {
-            private static void Postfix() { _instance?.TryRegister(); }
+            private static void Postfix() { _instance?.TryRegister(); _instance?._idolRecipes?.Refresh(); }
         }
     }
 }
