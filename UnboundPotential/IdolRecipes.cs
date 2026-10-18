@@ -26,15 +26,14 @@ namespace UnboundPotential
 
         internal IdolRecipes(BaseUnityPlugin plugin, ConfigSync sync)
         {
-            // Default item prefab identifiers follow the Valheim 1.0 item catalog.
-            // ServerSync synchronizes each recipe setting independently.
+
             AddTier(plugin, sync, "Wood", 0, "Wood:50,Resin:40", "piece_workbench", 3);
             AddTier(plugin, sync, "Bronze", 1, "Bronze:8,Coal:10", "forge", 2);
             AddTier(plugin, sync, "Iron", 2, "Iron:8,Chain:10", "forge", 4);
             AddTier(plugin, sync, "Silver", 3, "Silver:8,Obsidian:10", "forge", 5);
             AddTier(plugin, sync, "BlackMetal", 4, "BlackMetal:8,LinenThread:10", "forge", 6);
             AddTier(plugin, sync, "BlackMarble", 5, "BlackMarble:10,Sap:15", "blackforge", 1);
-            AddTier(plugin, sync, "Flametal", 6, "FlametalNew:8,Ashwood:10", "blackforge", 4);
+            AddTier(plugin, sync, "Flametal", 6, "FlametalNew:8,Blackwood:10", "blackforge", 4);
             AddTier(plugin, sync, "DeepNorth", 7, "Gold:10,Frostwood:10", "blackforge", 6);
         }
 
@@ -43,16 +42,17 @@ namespace UnboundPotential
         {
             foreach (string type in new[] { "Weapon", "Armor" })
             {
-                string section = "Idol - " + tier + " " + type;
+                string section = "04 - Idols";
+                string prefix = tier + type + " - ";
                 var entry = new Entry { Key = tier + type };
-                entry.Enabled = Bind(plugin, sync, section, "Enabled", true, "Enable this crafting recipe.");
-                entry.Item = Bind(plugin, sync, section, "ItemPrefab", "Upgrader" + index + type,
+                entry.Enabled = Bind(plugin, sync, section, prefix + "Enabled", true, "Enable this crafting recipe.");
+                entry.Item = Bind(plugin, sync, section, prefix + "ItemPrefab", "Upgrader" + index + type,
                     "Vanilla idol prefab identifier; verify against the installed game assets.");
-                entry.Materials = Bind(plugin, sync, section, "Requirements", materials,
+                entry.Materials = Bind(plugin, sync, section, prefix + "Requirements", materials,
                     "ItemPrefab:Amount pairs separated by commas.");
-                entry.Station = Bind(plugin, sync, section, "CraftingStation", station,
+                entry.Station = Bind(plugin, sync, section, prefix + "CraftingStation", station,
                     "Vanilla crafting station prefab identifier.");
-                entry.Level = Bind(plugin, sync, section, "StationLevel", level,
+                entry.Level = Bind(plugin, sync, section, prefix + "StationLevel", level,
                     "Minimum crafting station level (1 or higher).");
                 entry.Enabled.SettingChanged += (_, _) => Refresh();
                 entry.Item.SettingChanged += (_, _) => Refresh();

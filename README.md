@@ -1,4 +1,4 @@
-# Unbound Potential — development prototype v0.1.0
+# Unbound Potential
 
 Buildable Forge of Potential for Valheim 1.0. This is a **source prototype, not a compiled/tested release**.
 

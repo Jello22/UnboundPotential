@@ -8,8 +8,7 @@ using UnityEngine;
 
 namespace UnboundPotential
 {
-    // The vanilla recipe, consumption, item return and break-refund paths remain untouched.
-    // Only the two probability reads and the failed-upgrade quality calculation are intercepted.
+
     internal static class RefinementPatches
     {
         internal static ConfigEntry<bool> OverrideChances = null!;
@@ -55,10 +54,7 @@ namespace UnboundPotential
                     if (code[i].LoadsField(successField)) { code[i].opcode = OpCodes.Call; code[i].operand = successMethod; successCount++; }
                     else if (code[i].LoadsField(breakField)) { code[i].opcode = OpCodes.Call; code[i].operand = breakMethod; breakCount++; }
                 }
-                // Identify the failure-only AddItem call by the quality argument sequence:
-                // ldloc targetQuality, ldc.i4.2, sub, ldloc variant, ... AddItem.
-                // The exact local load opcode is compiler dependent; inspect only a narrow window
-                // preceding each AddItem and require exactly one match.
+
                 if (addItem != null)
                 {
                     for (int i = 2; i < code.Count; i++)

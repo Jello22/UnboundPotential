@@ -40,21 +40,26 @@ namespace UnboundPotential
         private void Awake()
         {
             _instance = this;
-            _enabled = Config.Bind("Forge", "Enabled", true, "Register the buildable Forge of Potential.");
-            _requirements = Config.Bind("Forge", "Requirements", "Bronze:10:True,FineWood:20:True,SurtlingCore:5:True,Stone:20:True", "ItemPrefab:Amount:Recover, comma separated. Restart the world after changes.");
-            _requiredStation = Config.Bind("Forge", "RequiredStation", "forge", "Required crafting station prefab; blank for none. Restart the world after changes.");
+            // Bind sections in the intended Configuration Manager category order.
+            // Category ordering follows initial registration; numbered names alone do not control it.
+            _lockConfiguration = Config.Bind("01 - General", "LockConfiguration", true,
+                "Lock synchronized gameplay settings to the server's values.");
+
+            RefinementPatches.OverrideChances = Config.Bind("02 - Refinement", "01 - OverrideChances", false,
+                "False preserves each vanilla idol's own success and break chances. True uses the percentage settings below.");
+            RefinementPatches.SuccessChance = Config.Bind("02 - Refinement", "02 - SuccessChance", 65f,
+                new ConfigDescription("Success percentage when OverrideChances is enabled.", new AcceptableValueRange<float>(0f, 100f)));
+            RefinementPatches.BreakChance = Config.Bind("02 - Refinement", "03 - BreakChance", 10f,
+                new ConfigDescription("Break percentage when OverrideChances is enabled and PreventBreakage is false. Clamped to remaining probability.", new AcceptableValueRange<float>(0f, 100f)));
+            RefinementPatches.PreventBreakage = Config.Bind("02 - Refinement", "04 - PreventBreakage", false,
+                "Prevent item destruction. Failed refinement reduces quality by one, but never below 1.");
+
+            _enabled = Config.Bind("03 - Forge", "Enabled", true, "Register the buildable Forge of Potential.");
+            _requirements = Config.Bind("03 - Forge", "Requirements", "Bronze:10:True,FineWood:20:True,SurtlingCore:5:True,Stone:20:True", "ItemPrefab:Amount:Recover, comma separated. Updates when synchronized settings change.");
+            _requiredStation = Config.Bind("03 - Forge", "RequiredStation", "forge", "Required crafting station prefab; blank for none. Updates when synchronized settings change.");
             _requirements.SettingChanged += (_, _) => RefreshForgeSettings();
             _requiredStation.SettingChanged += (_, _) => RefreshForgeSettings();
-            RefinementPatches.OverrideChances = Config.Bind("Refinement", "OverrideChances", false,
-                "False preserves each vanilla idol's own success and break chances. True uses the percentage settings below.");
-            RefinementPatches.PreventBreakage = Config.Bind("Refinement", "PreventBreakage", false,
-                "Prevent item destruction. Failed refinement reduces quality by one, but never below 1.");
-            RefinementPatches.SuccessChance = Config.Bind("Refinement", "SuccessChance", 65f,
-                new ConfigDescription("Success percentage when OverrideChances is enabled.", new AcceptableValueRange<float>(0f, 100f)));
-            RefinementPatches.BreakChance = Config.Bind("Refinement", "BreakChance", 10f,
-                new ConfigDescription("Break percentage when OverrideChances is enabled and PreventBreakage is false. Clamped to remaining probability.", new AcceptableValueRange<float>(0f, 100f)));
-            _lockConfiguration = Config.Bind("General", "LockConfiguration", true,
-                "Lock synchronized gameplay settings to the server's values.");
+
             _configSync.AddLockingConfigEntry(_lockConfiguration);
             _configSync.AddConfigEntry(RefinementPatches.OverrideChances).SynchronizedConfig = true;
             _configSync.AddConfigEntry(RefinementPatches.PreventBreakage).SynchronizedConfig = true;
@@ -290,7 +295,11 @@ namespace UnboundPotential
         {
             private static void Prefix(ZNetScene __instance)
             {
-                if (_instance != null && _instance._registeredScene == __instance) _instance.Cleanup();
+                if (_instance != null && _instance._registeredScene == __instance)
+                {
+                    _instance._idolRecipes?.Cleanup();
+                    _instance.Cleanup();
+                }
             }
         }
 
