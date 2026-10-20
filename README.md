@@ -1,31 +1,37 @@
 # Unbound Potential
 
-Buildable Forge of Potential for Valheim 1.0. This is a **source prototype, not a compiled/tested release**.
+Craft your own Forge of Potential and refinement idols to enhance equipment beyond its normal limits.
 
-## Build
+# Features
 
-Open `UnboundPotential.csproj` in Rider. Set these MSBuild properties to your local paths (for example in an untracked `Directory.Build.props`):
+- Craftable Forge of Potential, available in the Hammer's Crafting category.
 
-- `BepInExLibDir`: directory containing `BepInEx.dll` and `0Harmony.dll`.
-- `PublicizedAssemblies`: directory containing `assembly_valheim_publicized.dll`.
-- `ValheimManaged`: Valheim's `valheim_Data/Managed` directory.
+- Craftable weapon and armor idols across all eight progression tiers.
 
-Compile against the game assemblies, **never ship them**. Copy only the compiled mod DLL to `BepInEx/plugins`.
+- Configurable crafting materials and station requirements.
 
-## Configuration
+- Optional refinement chance overrides and breakage prevention.
 
-The generated BepInEx config has `Forge.Enabled`, `Forge.Requirements` and `Forge.RequiredStation`.
+- ServerSync support with server-enforced configuration locking.
 
-Default requirements: `Bronze:10:True,FineWood:20:True,SurtlingCore:5:True,Stone:20:True`. The format is `PrefabName:Amount:Recover` separated by commas. `RequiredStation=forge` uses the vanilla forge prefab; empty means no nearby station requirement.
+- Refinement chances apply to the natural Forge of Potential when configured
 
-Changes require a world reload. This prototype does **not yet synchronize settings**, so do not deploy to multiplayer until ServerSync is integrated and tested.
+# Usage
 
-## Initial test plan
+Build a Forge of Potential using your Hammer, then craft refinement idols at their respective crafting stations.
 
-1. Verify the prefab `UpgradeStation` and station prefab `forge` resolve at runtime.
-2. Check the hammer Crafting category, icon, recipe and placement preview.
-3. Build and interact with the station, then dismantle it and verify resource recovery.
-4. Save/reload and test another client, after synchronization support is implemented.
-5. Verify naturally generated `AncientUpgradeStation` discovery is unaffected.
+Use the idols at the Forge of Potential to attempt equipment refinements. Higher-tier idols require progressively more advanced crafting stations.
 
-The source-derived behavior has been checked against the supplied exported C# files; Unity prefab serialized data and runtime lifecycle still require testing.
+All crafting recipes, station requirements, and refinement settings can be customized through the BepInEx configuration file or Configuration Manager.
+
+By default, refinement uses Valheim's original success and break chances. These can be overridden in the configuration. Breakage prevention can also be enabled to replace item destruction with a failed refinement that reduces item quality by one, never below quality 1.
+
+# Installation
+
+- Install with Gale Mod Manager
+
+- Manual instllation: Extract into BepInEx/Plugins
+
+# Thanks
+
+Thanks to all the help and inspiration from the Odin+ peeps and everyone else in the modding community for a giant resource of knowledge.
