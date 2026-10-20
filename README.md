@@ -12,9 +12,13 @@ Craft your own Forge of Potential and refinement idols to enhance equipment beyo
 
 - Optional refinement chance overrides and breakage prevention.
 
-- ServerSync support with server-enforced configuration locking.
+- ServerSync support with server-enforced configuration.
 
 - Refinement chances apply to the natural Forge of Potential when configured
+
+# Notes
+
+Not extensively tested in multiplayer other than to verify that serversync functions and nothing else breaks if there are issues please open a thread 
 
 # Usage
 
