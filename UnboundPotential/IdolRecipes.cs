@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace UnboundPotential
 {
-    // Recipes only: vanilla idol item prefabs and their upgrader behavior remain untouched.
     internal sealed class IdolRecipes
     {
         private sealed class Entry
@@ -80,7 +79,6 @@ namespace UnboundPotential
             _db = db;
             foreach (Entry entry in _entries)
             {
-                // Never remove an existing vanilla recipe for the same output.
                 if (!TryResolve(db, scene, entry, out ItemDrop? output,
                         out CraftingStation? station, out Piece.Requirement[] requirements))
                 {
