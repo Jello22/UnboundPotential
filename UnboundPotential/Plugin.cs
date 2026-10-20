@@ -20,7 +20,6 @@ namespace UnboundPotential
         private static Plugin? _instance;
         private Harmony? _harmony;
         private IdolRecipes? _idolRecipes;
-        // The server is authoritative for gameplay configuration.
         private readonly ConfigSync _configSync = new ConfigSync(Guid)
         {
             DisplayName = Name,
@@ -40,8 +39,6 @@ namespace UnboundPotential
         private void Awake()
         {
             _instance = this;
-            // Bind sections in the intended Configuration Manager category order.
-            // Category ordering follows initial registration; numbered names alone do not control it.
             _lockConfiguration = Config.Bind("01 - General", "LockConfiguration", true,
                 "Lock synchronized gameplay settings to the server's values.");
 
@@ -181,8 +178,6 @@ namespace UnboundPotential
                 }
             }
 
-            // An inactive parent prevents ZNetView.Awake/Start and Piece.Awake on the template.
-            // The child retains activeSelf=true so a normal scene Instantiate creates an active piece.
             GameObject root = new GameObject("UnboundPotential_PrefabStorage");
             root.SetActive(false);
             root.transform.SetParent(scene.transform, false);
@@ -213,6 +208,7 @@ namespace UnboundPotential
                 piece.m_description = "Refine equipment using idols.";
                 piece.m_icon = upgrader.m_icon;
                 piece.m_category = Piece.PieceCategory.Crafting;
+                piece.m_usage = Piece.UsageTagFlags.Crafting;
                 piece.m_resources = resources;
                 piece.m_craftingStation = station;
                 piece.m_canBeRemoved = true;
